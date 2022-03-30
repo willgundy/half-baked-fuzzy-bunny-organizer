@@ -9,12 +9,42 @@ logoutButton.addEventListener('click', () => {
     logout();
 });
 
-function displayFamilies() {
+async function displayFamilies() {
     // fetch families from supabase
+    const families = await getFamilies();
 
     // clear out the familiesEl
+    familiesEl.innerHTML = '';
 
     for (let family of families) {
+        const familyDiv = document.createElement('div');
+        const familyNameEl = document.createElement('h3');
+        const bunnyContainer = document.createElement('div');
+
+        familyDiv.classList.add('family');
+        familyNameEl.textContent = family.name;
+        bunnyContainer.classList.add('bunnies');
+
+        for (let bunny of family.fuzzy_bunnies) {
+            const bunnyDiv = document.createElement('div');
+            bunnyDiv.classList.add('bunny');
+            bunnyDiv.textContent = bunny.name;
+            bunnyDiv.id = bunny.id;
+
+            bunnyDiv.addEventListener('click', async () => {
+                const bunnyId = bunnyDiv.id;
+
+                await deleteBunny(bunnyId);
+
+                displayFamilies();
+            });
+
+            bunnyContainer.append(bunnyDiv);
+        }
+
+        familyDiv.append(familyNameEl, bunnyContainer);
+
+        familiesEl.append(familyDiv);
         // create three elements for each family, one for the whole family, one to hold the name, and one to hold the bunnies
         // your HTML Element should look like this:
         // <div class="family">
@@ -30,15 +60,12 @@ function displayFamilies() {
         //    make an element with the css class 'bunny', and put the bunny's name in the text content
         //    add an event listener to the bunny el. On click, delete the bunny, then refetch and redisplay all families.
         // append this bunnyEl to the bunniesEl
+
+        // append the bunniesEl and nameEl to the familyEl
+
+        // append the familyEl to the familiesEl
     }
-
-    // append the bunniesEl and nameEl to the familyEl
-
-    // append the familyEl to the familiesEl
 }
 
-window.addEventListener('load', async () => {
-    const families = await getFamilies();
 
-    displayFamilies(families);
-});
+window.addEventListener('load', displayFamilies);
