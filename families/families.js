@@ -84,20 +84,20 @@ function dragStart(e) {
 
 function dragEnter(e) {
     e.preventDefault();
-    e.target.classList.add('dragOver');
+    e.currentTarget.classList.add('dragOver');
 }
 
 function dragOver(e) {
     e.preventDefault();
-    e.target.classList.add('dragOver');
+    e.currentTarget.classList.add('dragOver');
 }
 
 function dragLeave(e) {
-    e.target.classList.remove('dragOver');
+    e.currentTarget.classList.remove('dragOver');
 }
 
 async function drop(e) {
-    e.target.classList.remove('dragOver');
+    e.currentTarget.classList.remove('dragOver');
 
     const bunnyId = e.dataTransfer.getData('text');
 
