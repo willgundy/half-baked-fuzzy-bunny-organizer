@@ -27,6 +27,16 @@ export async function deleteBunny(id) {
     return checkError(response);
 }
 
+export async function updateBunnyFamily(bunnyId, familyId) {
+    const response = await client 
+        .from('fuzzy_bunnies')
+        .update({ family_id: familyId })
+        .match({ id: bunnyId })
+        .single();
+
+    return checkError(response);
+}
+
 export async function createBunny(bunny) {
     const response = await client
         .from('fuzzy_bunnies')

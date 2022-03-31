@@ -1,4 +1,4 @@
-import { checkAuth, deleteBunny, getFamilies, logout } from '../fetch-utils.js';
+import { checkAuth, deleteBunny, getFamilies, logout, updateBunnyFamily } from '../fetch-utils.js';
 
 checkAuth();
 
@@ -22,14 +22,20 @@ async function displayFamilies() {
         const bunnyContainer = document.createElement('div');
 
         familyDiv.classList.add('family');
+        familyDiv.id = family.id;
         familyNameEl.textContent = family.name;
         bunnyContainer.classList.add('bunnies');
+        familyDiv.addEventListener('dragenter', dragEnter);
+        familyDiv.addEventListener('dragover', dragOver);
+        familyDiv.addEventListener('dragleave', dragLeave);
+        familyDiv.addEventListener('drop', drop);
 
         for (let bunny of family.fuzzy_bunnies) {
             const bunnyDiv = document.createElement('div');
             bunnyDiv.classList.add('bunny');
             bunnyDiv.textContent = bunny.name;
             bunnyDiv.id = bunny.id;
+            bunnyDiv.draggable = true;
 
             bunnyDiv.addEventListener('click', async () => {
                 const bunnyId = bunnyDiv.id;
@@ -37,6 +43,10 @@ async function displayFamilies() {
                 await deleteBunny(bunnyId);
 
                 displayFamilies();
+            });
+
+            bunnyDiv.addEventListener('dragstart', (e) => {
+                dragStart(e);
             });
 
             bunnyContainer.append(bunnyDiv);
@@ -67,5 +77,39 @@ async function displayFamilies() {
     }
 }
 
+function dragStart(e) {
+    // console.log(e);
+    e.dataTransfer.setData('text', e.target.id);
+}
+
+function dragEnter(e) {
+    e.preventDefault();
+    e.target.classList.add('dragOver');
+}
+
+function dragOver(e) {
+    e.preventDefault();
+    e.target.classList.add('dragOver');
+}
+
+function dragLeave(e) {
+    e.target.classList.remove('dragOver');
+}
+
+async function drop(e) {
+    e.target.classList.remove('dragOver');
+
+    const bunnyId = e.dataTransfer.getData('text');
+
+    const bunnyElId = document.getElementById(bunnyId);
+
+    const elementPlace = e.path.length - 7;
+
+    e.path[elementPlace].childNodes[1].append(bunnyElId);
+
+    const familyId = e.path[elementPlace].id;
+
+    await updateBunnyFamily(bunnyId, familyId);
+}
 
 window.addEventListener('load', displayFamilies);

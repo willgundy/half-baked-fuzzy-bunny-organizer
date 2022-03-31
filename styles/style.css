@@ -186,3 +186,9 @@ footer {
     padding-top: 40px;
 }
 
+.dragOver {
+    background-color: magenta;
+    color: white;
+    border: none;
+    scale: 1.2;
+}
